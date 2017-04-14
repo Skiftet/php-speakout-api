@@ -4,6 +4,8 @@ Run `composer require skiftet/speakout-api-client` in your project root to insta
 
 ### Usage
 
+#### NOTE: The api currently only works with an in-development version of the Speakout api that isn't released yet
+
 ```php
 use Skiftet\Speakout\Api\Client as Speakout;
 
