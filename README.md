@@ -33,3 +33,11 @@ $campaigns = $speakout->campaigns()->orderBy('actions')->has('actions', function
     return $query->since('2017-03-01'); // this can also be an instance of \DateTime
 })->get();
 ```
+
+
+### TODO
+
+* Implement creating new actions
+* Hydrated models
+* Decide whether to use active record or data mapper pattern for models
+* Lazy loading model relationships
