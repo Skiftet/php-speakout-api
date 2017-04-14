@@ -5,6 +5,7 @@ namespace Skiftet\Speakout\Api;
 
 use Closure;
 use DateTime;
+use InvalidArgumentException;
 
 /**
  *
@@ -36,6 +37,16 @@ class Query
      * @var array
      */
     private $subQueries;
+
+    /**
+     * @var int
+     */
+    private $page;
+
+    /**
+     * @var int
+     */
+    private $limit;
 
     /**
      * @param BaseClient $client
@@ -91,6 +102,29 @@ class Query
     }
 
     /**
+     * @param int $page
+     */
+    public function page(int $page): self
+    {
+        if ($page < 1) {
+            throw new InvalidArgumentException("Pages are 1-indexed. The provided page was $page");
+        }
+
+        $this->page;
+        return $this;
+    }
+
+    public function limit(int $limit): self
+    {
+        if ($limit < 1) {
+            throw new InvalidArgumentException("The limit must be at least 1. The provided page was $limit");
+        }
+
+        $this->limit = $limit;
+        return $this;
+    }
+
+    /**
      *
      */
     private function queryData(): array
@@ -104,6 +138,14 @@ class Query
             $queryData['since'] = $this->since;
         }
 
+        if ($this->page) {
+            $queryData['page'] = $this->page;
+        }
+
+        if ($this->limit) {
+            $queryData['limit'] = $this->limit;
+        }
+
         foreach ($this->subQueries as $name => $query) {
             $subQueryData = $query->queryData();
             foreach ($subQueryData as $key => $value) {
@@ -115,7 +157,7 @@ class Query
     }
 
     /**
-     *
+     * @param ?string $path
      */
     public function get(string $path = null): array
     {

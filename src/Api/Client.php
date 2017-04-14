@@ -15,6 +15,7 @@ class Client extends BaseClient
      */
     private $resources = [
         'campaigns' => null,
+        'actions' => null,
     ];
 
     /**
