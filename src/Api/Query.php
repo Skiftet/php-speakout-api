@@ -127,9 +127,31 @@ class Query
     /**
      *
      */
-    private function queryData(): array
+    private function commonQueryData(): array
     {
-        $queryData = [];
+        return [];
+    }
+
+    private function singleQueryData(): array
+    {
+        $queryData = $this->commonQueryData();
+
+        foreach ($this->subQueries as $name => $query) {
+            $subQueryData = $query->arrayQueryData();
+            foreach ($subQueryData as $key => $value) {
+                $queryData["$key.$name"] = $value;
+            }
+        }
+
+        return $queryData;
+    }
+
+    /**
+     *
+     */
+    private function arrayQueryData(): array
+    {
+        $queryData = $this->commonQueryData();
         if ($this->orderBy) {
             $queryData['order_by'] = $this->orderBy;
         }
@@ -147,7 +169,7 @@ class Query
         }
 
         foreach ($this->subQueries as $name => $query) {
-            $subQueryData = $query->queryData();
+            $subQueryData = $query->arrayQueryData();
             foreach ($subQueryData as $key => $value) {
                 $queryData["$key.$name"] = $value;
             }
@@ -156,12 +178,25 @@ class Query
         return $queryData;
     }
 
+    public function find(int $id): array
+    {
+        $query = $this->singleQueryData();
+
+        if (!$this->path) {
+            throw new \Exception(
+                'No path is set'
+            );
+        }
+
+        return $this->client->get("/$id", $query);
+    }
+
     /**
      * @param ?string $path
      */
     public function get(string $path = null): array
     {
-        $query = $this->queryData();
+        $query = $this->arrayQueryData();
 
         if (!$path) {
             if (!$this->path) {
