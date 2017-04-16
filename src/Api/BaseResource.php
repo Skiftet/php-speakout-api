@@ -29,7 +29,7 @@ abstract class BaseResource extends BaseClient
     protected function hydrate($data): BaseModel
     {
         $class = 'Skiftet\\Speakout\\Models\\'.str_singular(class_basename(static::class));
-        return new $class($this, $data);
+        return new $class($data, $this);
     }
 
     public function __construct(array $parameters)

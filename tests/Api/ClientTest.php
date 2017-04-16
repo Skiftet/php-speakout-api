@@ -120,6 +120,15 @@ class ClientTest extends TestCase
         $this->assertNotCount(0, $campaigns);
         $this->assertInstanceOf(Campaign::class, $campaigns[0]);
         $this->assertInternalType('string', $campaigns[0]->url());
+        return $campaigns;
+    }
+
+    /**
+     * @depends testHydration
+     */
+    public function testSerialization($campaigns)
+    {
+        $this->assertInstanceOf(Campaign::class, unserialize(serialize($campaigns))[0]);
     }
 
 

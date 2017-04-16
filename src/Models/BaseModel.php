@@ -43,6 +43,12 @@ class BaseModel implements ArrayAccess
         unset($this->data[$offset]);
     }
 
+    public function __sleep()
+    {
+        return ['data'];
+    }
+
+
     /**
      * @var BaseClient
      */
@@ -53,10 +59,7 @@ class BaseModel implements ArrayAccess
      */
     protected $data;
 
-    /**
-     * @param array $data
-     */
-    public function __construct(BaseClient $client, array $data)
+    public function setClient(BaseClient $client): self
     {
         $this->client = $client->clientForResource(
             strtolower(
@@ -65,6 +68,17 @@ class BaseModel implements ArrayAccess
                 )
             )
         );
+        return $this;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function __construct(array $data, ?BaseClient $client = null)
+    {
+        if ($client) {
+            $this->setClient($client);
+        }
         $this->data = $data;
     }
 }
