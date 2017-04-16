@@ -18,6 +18,11 @@ class Client extends BaseClient
         'actions' => null,
     ];
 
+    public function clientForResource(string $resource)
+    {
+        return $this->$resource;
+    }
+
     /**
      * @inheritDoc
      */

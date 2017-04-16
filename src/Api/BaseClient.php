@@ -8,7 +8,7 @@ use GuzzleHttp\Client as Guzzle;
 /**
  *
  */
-class BaseClient
+abstract class BaseClient
 {
     /**
      * @var string
@@ -70,6 +70,11 @@ class BaseClient
         }
     }
 
+    public function endpoint(): string
+    {
+        return $this->endpoint;
+    }
+
     /**
      * @param string $path
      * @param array $query
@@ -101,4 +106,5 @@ class BaseClient
         );
     }
 
+    abstract public function clientForResource(string $resource);
 }

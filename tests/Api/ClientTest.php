@@ -5,6 +5,7 @@ namespace Skiftet\Speakout\Tests\Api;
 use InvalidArgumentException;
 use Skiftet\Speakout\Api\Client as Speakout;
 use PHPUnit\Framework\TestCase;
+use Skiftet\Speakout\Models\Campaign;
 
 class ClientTest extends TestCase
 {
@@ -90,6 +91,35 @@ class ClientTest extends TestCase
         ]);
 
         $this->assertInternalType('array', $speakout->actions()->all());
+    }
+
+    public function testHydration()
+    {
+        $env = [
+            'SPEAKOUT_API_ENDPOINT' => null,
+            'SPEAKOUT_API_USER' => null,
+            'SPEAKOUT_API_PASSWORD' => null,
+        ];
+
+        foreach ($env as $key => &$value) {
+            $value = getenv($key);
+            if (!$value) {
+                throw new InvalidArgumentException(
+                    "$key needs to be set"
+                );
+            }
+        }
+
+        $speakout = new Speakout([
+            'endpoint' => $env['SPEAKOUT_API_ENDPOINT'],
+            'user'     => $env['SPEAKOUT_API_USER'],
+            'password' => $env['SPEAKOUT_API_PASSWORD'],
+        ]);
+
+        $campaigns = $speakout->campaigns()->all();
+        $this->assertNotCount(0, $campaigns);
+        $this->assertInstanceOf(Campaign::class, $campaigns[0]);
+        $this->assertInternalType('string', $campaigns[0]->url());
     }
 
 
