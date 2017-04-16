@@ -80,7 +80,7 @@ abstract class BaseClient
      * @param array $query
      * @param bool $usePrefix
      */
-    public function get(string $path, array $query = [], bool $usePrefix = true)
+    public function get(string $path, array $query = [], bool $usePrefix = true): array
     {
         if ($usePrefix) {
             if (0 !== strpos($path, '/')) {

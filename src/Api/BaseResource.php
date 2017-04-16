@@ -56,6 +56,16 @@ abstract class BaseResource extends BaseClient
         ;
     }
 
+    public function get(string $path, array $query = [], bool $usePrefix = true): array
+    {
+        return collect(parent::get($path, $query, $usePrefix))
+            ->map(function ($item) {
+                return $this->hydrate($item);
+            })
+            ->toArray()
+        ;
+    }
+
     /**
      *
      */
