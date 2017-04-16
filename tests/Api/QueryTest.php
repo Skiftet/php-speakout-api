@@ -3,14 +3,18 @@
 namespace Skiftet\Speakout\Tests\Api;
 
 use PHPUnit\Framework\TestCase;
-use Skiftet\Speakout\Api\Client;
+use Skiftet\Speakout\Api\BaseResource;
 use Skiftet\Speakout\Api\Query;
 
 class QueryTest extends TestCase
 {
     public function testListing()
     {
-        $mockClient = $this->createMock(Client::class);
+        $mockClient = $this
+            ->getMockBuilder(BaseResource::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
         $query = new Query($mockClient, '/campaigns');
         $mockClient
             ->expects($this->once())
@@ -23,7 +27,11 @@ class QueryTest extends TestCase
 
     public function testOrderedListing()
     {
-        $mockClient = $this->createMock(Client::class);
+        $mockClient = $this
+            ->getMockBuilder(BaseResource::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
         $query = new Query($mockClient, '/campaigns');
         $query->orderBy('actions');
         $mockClient
@@ -39,7 +47,11 @@ class QueryTest extends TestCase
 
     public function testOrderedSubQueryListing()
     {
-        $mockClient = $this->createMock(Client::class);
+        $mockClient = $this
+            ->getMockBuilder(BaseResource::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
         $query = new Query($mockClient, '/campaigns');
         $query->has('actions', function(Query $subQuery) {
             return $subQuery->since('2017-03-01');

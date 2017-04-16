@@ -6,6 +6,7 @@ namespace Skiftet\Speakout\Api;
 use Closure;
 use DateTime;
 use InvalidArgumentException;
+use Skiftet\Speakout\Models\BaseModel;
 
 /**
  *
@@ -14,7 +15,7 @@ class Query
 {
 
     /**
-     * @var BaseClient
+     * @var BaseResource
      */
     private $client;
 
@@ -49,10 +50,10 @@ class Query
     private $limit;
 
     /**
-     * @param BaseClient $client
+     * @param BaseResource $client
      * @param string $path
      */
-    public function __construct(BaseClient $client, string $path = null)
+    public function __construct(BaseResource $client, string $path = null)
     {
         $this->client = $client;
         $this->path = $path;
@@ -178,7 +179,7 @@ class Query
         return $queryData;
     }
 
-    public function find(int $id): array
+    public function find(int $id): BaseModel
     {
         $query = $this->singleQueryData();
 
@@ -188,7 +189,9 @@ class Query
             );
         }
 
-        return $this->client->get("$this->path/$id", $query, false);
+        return $this->client->hydrate(
+            $this->client->get("$this->path/$id", $query, false)
+        );
     }
 
     /**
@@ -208,6 +211,11 @@ class Query
             $path = $this->path;
         }
 
-        return $this->client->get($path, $query, false);
+        return collect($this->client->get($path, $query, false))
+            ->map(function ($item) {
+                return $this->client->hydrate($item);
+            })
+            ->toArray()
+        ;
     }
 }

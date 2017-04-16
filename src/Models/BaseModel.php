@@ -65,6 +65,7 @@ class BaseModel implements ArrayAccess
         if (!$this->client) {
             throw new RuntimeException('There is no client set');
         }
+
         return $this->client;
     }
 
@@ -88,6 +89,7 @@ class BaseModel implements ArrayAccess
         if ($client) {
             $this->setClient($client);
         }
+
         $this->data = $data;
     }
 }

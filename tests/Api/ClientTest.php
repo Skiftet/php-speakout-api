@@ -65,6 +65,12 @@ class ClientTest extends TestCase
         return $campaigns;
     }
 
+    public function testGetHydration()
+    {
+        $campaigns = $this->speakout->campaigns()->query()->get();
+        $this->assertInstanceOf(Campaign::class, $campaigns[0]);
+    }
+
     /**
      * @depends testHydration
      */

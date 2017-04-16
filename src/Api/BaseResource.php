@@ -26,7 +26,7 @@ abstract class BaseResource extends BaseClient
         return str_slug(class_basename(static::class));
     }
 
-    protected function hydrate($data): BaseModel
+    public function hydrate($data): BaseModel
     {
         $class = 'Skiftet\\Speakout\\Models\\'.str_singular(class_basename(static::class));
         return new $class($data, $this);
@@ -40,7 +40,7 @@ abstract class BaseResource extends BaseClient
 
     public function find(int $id): BaseModel
     {
-        return $this->hydrate($this->query()->find($id));
+        return $this->query()->find($id);
     }
 
     /**
@@ -48,22 +48,7 @@ abstract class BaseResource extends BaseClient
      */
     public function all(): array
     {
-        return collect($this->query()->get())
-            ->map(function ($item) {
-                return $this->hydrate($item);
-            })
-            ->toArray()
-        ;
-    }
-
-    public function get(string $path, array $query = [], bool $usePrefix = true): array
-    {
-        return collect(parent::get($path, $query, $usePrefix))
-            ->map(function ($item) {
-                return $this->hydrate($item);
-            })
-            ->toArray()
-        ;
+        return $this->query()->get();
     }
 
     /**
