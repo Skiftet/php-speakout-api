@@ -10,10 +10,9 @@ use Skiftet\Speakout\Models\Campaign;
 class ClientTest extends TestCase
 {
 
-    /**
-     *
-     */
-    public function testCampaignListing()
+    private $speakout;
+
+    protected function setUp()
     {
         $env = [
             'SPEAKOUT_API_ENDPOINT' => null,
@@ -30,96 +29,39 @@ class ClientTest extends TestCase
             }
         }
 
-        $speakout = new Speakout([
+        $this->speakout = new Speakout([
             'endpoint' => $env['SPEAKOUT_API_ENDPOINT'],
             'user'     => $env['SPEAKOUT_API_USER'],
             'password' => $env['SPEAKOUT_API_PASSWORD'],
         ]);
-        $this->assertInternalType('array', $speakout->campaigns()->all());
+    }
+
+    public function tearDown()
+    {
+        $this->speakout = null;
+    }
+
+    public function testCampaignListing()
+    {
+        $this->assertInternalType('array', $this->speakout->campaigns()->all());
     }
 
     public function testCampaignGet()
     {
-        $env = [
-            'SPEAKOUT_API_ENDPOINT' => null,
-            'SPEAKOUT_API_USER' => null,
-            'SPEAKOUT_API_PASSWORD' => null,
-        ];
-
-        foreach ($env as $key => &$value) {
-            $value = getenv($key);
-            if (!$value) {
-                throw new InvalidArgumentException(
-                    "$key needs to be set"
-                );
-            }
-        }
-
-        $speakout = new Speakout([
-            'endpoint' => $env['SPEAKOUT_API_ENDPOINT'],
-            'user'     => $env['SPEAKOUT_API_USER'],
-            'password' => $env['SPEAKOUT_API_PASSWORD'],
-        ]);
-        $campaign = $speakout->campaigns()->find(1);
+        $campaign = $this->speakout->campaigns()->find(1);
         $this->assertArrayHasKey('id', $campaign);
     }
 
-    /**
-     *
-     */
     public function testActionListing()
     {
-        $env = [
-            'SPEAKOUT_API_ENDPOINT' => null,
-            'SPEAKOUT_API_USER' => null,
-            'SPEAKOUT_API_PASSWORD' => null,
-        ];
-
-        foreach ($env as $key => &$value) {
-            $value = getenv($key);
-            if (!$value) {
-                throw new InvalidArgumentException(
-                    "$key needs to be set"
-                );
-            }
-        }
-
-        $speakout = new Speakout([
-            'endpoint' => $env['SPEAKOUT_API_ENDPOINT'],
-            'user'     => $env['SPEAKOUT_API_USER'],
-            'password' => $env['SPEAKOUT_API_PASSWORD'],
-        ]);
-
-        $this->assertInternalType('array', $speakout->actions()->all());
+        $this->assertInternalType('array', $this->speakout->actions()->all());
     }
 
     public function testHydration()
     {
-        $env = [
-            'SPEAKOUT_API_ENDPOINT' => null,
-            'SPEAKOUT_API_USER' => null,
-            'SPEAKOUT_API_PASSWORD' => null,
-        ];
-
-        foreach ($env as $key => &$value) {
-            $value = getenv($key);
-            if (!$value) {
-                throw new InvalidArgumentException(
-                    "$key needs to be set"
-                );
-            }
-        }
-
-        $speakout = new Speakout([
-            'endpoint' => $env['SPEAKOUT_API_ENDPOINT'],
-            'user'     => $env['SPEAKOUT_API_USER'],
-            'password' => $env['SPEAKOUT_API_PASSWORD'],
-        ]);
-
-        $campaigns = $speakout->campaigns()->all();
+        $campaigns = $this->speakout->campaigns()->all();
         $this->assertNotCount(0, $campaigns);
         $this->assertInstanceOf(Campaign::class, $campaigns[0]);
-        $this->assertInternalType('string', $campaigns[0]->url());
         return $campaigns;
     }
 
@@ -138,28 +80,7 @@ class ClientTest extends TestCase
      */
     public function testUrlAfterSerialize(string $serialized)
     {
-        $env = [
-            'SPEAKOUT_API_ENDPOINT' => null,
-            'SPEAKOUT_API_USER' => null,
-            'SPEAKOUT_API_PASSWORD' => null,
-        ];
-
-        foreach ($env as $key => &$value) {
-            $value = getenv($key);
-            if (!$value) {
-                throw new InvalidArgumentException(
-                    "$key needs to be set"
-                );
-            }
-        }
-
-        $speakout = new Speakout([
-            'endpoint' => $env['SPEAKOUT_API_ENDPOINT'],
-            'user'     => $env['SPEAKOUT_API_USER'],
-            'password' => $env['SPEAKOUT_API_PASSWORD'],
-        ]);
-
         $campaigns = unserialize($serialized);
-        $this->assertInternalType('string', $campaigns[0]->setClient($speakout)->url());
+        $this->assertInternalType('string', $campaigns[0]->setClient($this->speakout)->url());
     }
 }
