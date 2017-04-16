@@ -20,7 +20,7 @@ class Client extends BaseClient
 
     public function clientForResource(string $resource)
     {
-        return $this->$resource;
+        return $this->$resource();
     }
 
     /**

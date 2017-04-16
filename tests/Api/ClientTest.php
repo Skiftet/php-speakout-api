@@ -128,8 +128,38 @@ class ClientTest extends TestCase
      */
     public function testSerialization($campaigns)
     {
-        $this->assertInstanceOf(Campaign::class, unserialize(serialize($campaigns))[0]);
+        $serialized = serialize($campaigns);
+        $this->assertInstanceOf(Campaign::class, unserialize($serialized)[0]);
+        return $serialized;
     }
 
+    /**
+     * @depends testSerialization
+     */
+    public function testUrlAfterSerialize(string $serialized)
+    {
+        $env = [
+            'SPEAKOUT_API_ENDPOINT' => null,
+            'SPEAKOUT_API_USER' => null,
+            'SPEAKOUT_API_PASSWORD' => null,
+        ];
 
+        foreach ($env as $key => &$value) {
+            $value = getenv($key);
+            if (!$value) {
+                throw new InvalidArgumentException(
+                    "$key needs to be set"
+                );
+            }
+        }
+
+        $speakout = new Speakout([
+            'endpoint' => $env['SPEAKOUT_API_ENDPOINT'],
+            'user'     => $env['SPEAKOUT_API_USER'],
+            'password' => $env['SPEAKOUT_API_PASSWORD'],
+        ]);
+
+        $campaigns = unserialize($serialized);
+        $this->assertInternalType('string', $campaigns[0]->setClient($speakout)->url());
+    }
 }

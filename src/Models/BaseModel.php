@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Skiftet\Speakout\Models;
 use ArrayAccess;
+use RuntimeException;
 use Skiftet\Speakout\Api\BaseClient;
 
 /**
@@ -58,6 +59,14 @@ class BaseModel implements ArrayAccess
      * @var array
      */
     protected $data;
+
+    protected function client(): BaseClient
+    {
+        if (!$this->client) {
+            throw new RuntimeException('There is no client set');
+        }
+        return $this->client;
+    }
 
     public function setClient(BaseClient $client): self
     {

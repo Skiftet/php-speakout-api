@@ -10,6 +10,6 @@ class Campaign extends BaseModel
 {
     public function url(): string
     {
-        return $this->client->endpoint().'/campaigns/'.urlencode($this['slug']);
+        return $this->client()->endpoint().'/campaigns/'.urlencode($this['slug']);
     }
 }
