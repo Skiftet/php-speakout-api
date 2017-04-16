@@ -188,13 +188,13 @@ class Query
             );
         }
 
-        return $this->client->get("/$id", $query);
+        return $this->client->get("$this->path/$id", $query, false);
     }
 
     /**
      * @param ?string $path
      */
-    public function get(string $path = null): array
+    public function get(?string $path = null): array
     {
         $query = $this->arrayQueryData();
 
