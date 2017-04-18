@@ -16,6 +16,7 @@ class Client extends BaseClient
     private $resources = [
         'campaigns' => null,
         'actions' => null,
+        'surveys' => null,
     ];
 
     public function clientForResource(string $resource)
