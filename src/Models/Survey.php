@@ -10,6 +10,6 @@ class Survey extends BaseModel
 {
     public function url(): string
     {
-        return $this->client()->endpoint().'/surveys/'.urlencode($this['id']);
+        return $this->client()->endpoint().'/surveys/'.urlencode((string)$this['id']);
     }
 }
