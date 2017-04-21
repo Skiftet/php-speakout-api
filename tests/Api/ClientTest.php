@@ -13,15 +13,16 @@ class ClientTest extends TestCase
 
     private $speakout;
 
-    protected function setUp()
-    {
-        $env = [
-            'SPEAKOUT_API_ENDPOINT' => null,
-            'SPEAKOUT_API_USER' => null,
-            'SPEAKOUT_API_PASSWORD' => null,
-        ];
+    private static $env = [
+        'SPEAKOUT_API_ENDPOINT' => null,
+        'SPEAKOUT_API_USER' => null,
+        'SPEAKOUT_API_PASSWORD' => null,
+        'SPEAKOUT_API_TEST_EMAIL' => null,
+    ];
 
-        foreach ($env as $key => &$value) {
+    public static function setUpBeforeClass()
+    {
+        foreach (self::$env as $key => &$value) {
             $value = getenv($key);
             if (!$value) {
                 throw new InvalidArgumentException(
@@ -29,11 +30,14 @@ class ClientTest extends TestCase
                 );
             }
         }
+    }
 
+    protected function setUp()
+    {
         $this->speakout = new Speakout([
-            'endpoint' => $env['SPEAKOUT_API_ENDPOINT'],
-            'user'     => $env['SPEAKOUT_API_USER'],
-            'password' => $env['SPEAKOUT_API_PASSWORD'],
+            'endpoint' => self::$env['SPEAKOUT_API_ENDPOINT'],
+            'user'     => self::$env['SPEAKOUT_API_USER'],
+            'password' => self::$env['SPEAKOUT_API_PASSWORD'],
         ]);
     }
 
@@ -75,7 +79,7 @@ class ClientTest extends TestCase
     public function testCreateActionInCampaign(Campaign $campaign)
     {
         $action = $campaign->actions()->create([
-            'email' => 'test@example.com',
+            'email' => self::$env['SPEAKOUT_API_TEST_EMAIL'],
             'firstname' => 'Test',
             'lastname' => 'Testsson',
             'postcode' => 12345,
