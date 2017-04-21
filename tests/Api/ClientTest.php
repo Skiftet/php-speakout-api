@@ -5,6 +5,7 @@ namespace Skiftet\Speakout\Tests\Api;
 use InvalidArgumentException;
 use Skiftet\Speakout\Api\Client as Speakout;
 use PHPUnit\Framework\TestCase;
+use Skiftet\Speakout\Models\Action;
 use Skiftet\Speakout\Models\Campaign;
 
 class ClientTest extends TestCase
@@ -41,17 +42,52 @@ class ClientTest extends TestCase
         $this->speakout = null;
     }
 
+    /**
+     *
+     */
     public function testCampaignListing()
     {
         $this->assertInternalType('array', $this->speakout->campaigns()->all());
     }
 
+    /**
+     *
+     */
     public function testCampaignGet()
     {
         $campaign = $this->speakout->campaigns()->find(1);
         $this->assertArrayHasKey('id', $campaign);
+        return $campaign;
     }
 
+    /**
+     * @depends testCampaignGet
+     * @param Campaign $campaign
+     */
+    public function testActionInCampaigns(Campaign $campaign)
+    {
+        $this->assertInternalType('array', $campaign->actions()->all());
+    }
+
+    /**
+     * @depends testCampaignGet
+     */
+    public function testCreateActionInCampaign(Campaign $campaign)
+    {
+        $action = $campaign->actions()->create([
+            'email' => 'test@example.com',
+            'firstname' => 'Test',
+            'lastname' => 'Testsson',
+            'postcode' => 12345,
+            'action_type' => 'rsign',
+        ]);
+
+        $this->assertInstanceOf(Action::class, $action);
+    }
+
+    /**
+     *
+     */
     public function testActionListing()
     {
         $this->assertInternalType('array', $this->speakout->actions()->all());

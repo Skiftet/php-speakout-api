@@ -6,19 +6,15 @@ namespace Skiftet\Speakout\Api;
 use InvalidArgumentException;
 use Skiftet\Speakout\Models\BaseModel;
 
-abstract class BaseResource extends BaseClient implements ResourceInterface
+/**
+ *
+ */
+class NestedResourceProxy implements ResourceInterface
 {
-    public function clientForResource(string $resource): BaseResource
-    {
-        if (ucfirst($resource) !== class_basename(static::class)) {
-            throw new InvalidArgumentException();
-        }
 
-        return $this;
-    }
-
-    private $subResources = [];
-
+    /**
+     *
+     */
     public function subResourcePaths(): array
     {
         return [];
@@ -55,24 +51,53 @@ abstract class BaseResource extends BaseClient implements ResourceInterface
 
     public function hydrate($data): BaseModel
     {
-        $class = 'Skiftet\\Speakout\\Models\\'.str_singular(class_basename(static::class));
-        return new $class($data, $this);
+        return $this->resource->hydrate($data);
     }
 
     public function create(array $data, ?string $prefix = null): BaseModel
     {
-        if (!$prefix) {
-            $prefix = '';
-        }
-
-        $prefix = trim($prefix, '/');
-        return $this->query("$prefix/$this->prefix")->create($data);
+        return $this->resource->create(
+            $data,
+            $this->prefix()
+        );
     }
 
-    public function __construct(array $parameters)
+    /**
+     *
+     */
+    private function prefix()
     {
-        $parameters['prefix'] = $this->path();
-        parent::__construct($parameters);
+        return "$this->path/$this->id";
+    }
+
+    /**
+     * @var ResourceInterface $resource
+     */
+     private $resource;
+
+     /**
+      * @var string $path
+      */
+     private $path;
+
+     /**
+      * @var int $id
+      */
+     private $id;
+
+     /**
+      * @param ResourceInterface $resource
+      * @param string $path
+      * @param int $id
+      */
+    public function __construct(
+        ResourceInterface $resource,
+        string $path,
+        int $id
+    ) {
+        $this->resource = $resource;
+        $this->path = trim($path, '/');
+        $this->id = $id;
     }
 
     public function find(int $id): BaseModel
@@ -85,19 +110,15 @@ abstract class BaseResource extends BaseClient implements ResourceInterface
      */
     public function all(): array
     {
-        return $this->query()->get();
+        return $this->resource->by($this->path, $this->id)->get();
     }
 
     /**
-     * @param ?string $prefix
+     *
      */
     public function query(?string $prefix = null): Query
     {
-        if (!$prefix) {
-            $prefix = $this->prefix;
-        }
-
-        return new Query($this, $prefix);
+        return new Query($this, $this->prefix);
     }
 
     /**
@@ -106,6 +127,11 @@ abstract class BaseResource extends BaseClient implements ResourceInterface
     public function orderBy(string $column): Query
     {
         return $this->query()->orderBy($column);
+    }
+
+    public function in($idOrModel)
+    {
+
     }
 
 }

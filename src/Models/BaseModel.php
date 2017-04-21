@@ -5,6 +5,10 @@ namespace Skiftet\Speakout\Models;
 use ArrayAccess;
 use RuntimeException;
 use Skiftet\Speakout\Api\BaseClient;
+use Skiftet\Speakout\Api\BaseResource;
+use Skiftet\Speakout\Api\Query;
+use Skiftet\Speakout\Api\ResourceInterface;
+use Skiftet\Speakout\Api\NestedResourceProxy;
 
 /**
  *
@@ -51,7 +55,7 @@ class BaseModel implements ArrayAccess
 
 
     /**
-     * @var BaseClient
+     * @var BaseResource
      */
     protected $client;
 
@@ -60,7 +64,7 @@ class BaseModel implements ArrayAccess
      */
     protected $data;
 
-    protected function client(): BaseClient
+    protected function client(): BaseResource
     {
         if (!$this->client) {
             throw new RuntimeException('There is no client set');
@@ -69,16 +73,28 @@ class BaseModel implements ArrayAccess
         return $this->client;
     }
 
+    private function path(): string
+    {
+        return strtolower(str_plural(class_basename(static::class)));
+    }
+
     public function setClient(BaseClient $client): self
     {
-        $this->client = $client->clientForResource(
-            strtolower(
-                str_plural(
-                    class_basename(static::class)
-                )
-            )
-        );
+        $this->client = $client->clientForResource($this->path());
         return $this;
+    }
+
+    public function subResource(string $path): ResourceInterface
+    {
+        $path = trim($path, '/');
+        $subResource = $this->client()->subResource($path);
+
+        return new NestedResourceProxy($subResource, $this->path(), $this['id']);
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        return $this->subResource($name);
     }
 
     /**

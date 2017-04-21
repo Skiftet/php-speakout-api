@@ -19,7 +19,7 @@ class Client extends BaseClient
         'surveys' => null,
     ];
 
-    public function clientForResource(string $resource)
+    public function clientForResource(string $resource): BaseResource
     {
         return $this->$resource();
     }
@@ -37,13 +37,16 @@ class Client extends BaseClient
 
         if (!$this->resources[$name]) {
             $class = __NAMESPACE__.'\\'.ucfirst($name);
-            $this->resources[$name] = new $class([
+            $this->resources[$name] = $resource = new $class([
                 'user'     => $this->user,
                 'password' => $this->password,
                 'endpoint' => $this->endpoint,
                 'version'  => $this->version,
                 'client'   => $this->client,
             ]);
+            foreach ($resource->subResourcePaths() as $path) {
+                $resource->registerSubResource($this->clientForResource($path));
+            }
         }
 
         return $this->resources[$name];

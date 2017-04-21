@@ -61,21 +61,13 @@ class Query
     }
 
     /**
-     * @param array $arguments
-     */
-    static public function create(...$arguments): self
-    {
-        return new static(...$arguments);
-    }
-
-    /**
      * @param string $relationship
      * @param Closure $function
      */
     public function has(string $relationship, Closure $function): self
     {
         $this->subQueries[$relationship] = $function(
-            static::create($this->client, $relationship)
+            new static($this->client, $relationship)
         );
         return $this;
     }
@@ -122,6 +114,23 @@ class Query
         }
 
         $this->limit = $limit;
+        return $this;
+    }
+
+    /**
+     * @var string
+     */
+    private $byPath;
+
+    /**
+     * @var int
+     */
+    private $byId;
+
+    public function by(string $path, int $id): self
+    {
+        $this->byPath = trim($path, '/');
+        $this->byId = $id;
         return $this;
     }
 
@@ -179,6 +188,15 @@ class Query
         return $queryData;
     }
 
+    public function create(array $data): BaseModel
+    {
+        $query = [];
+
+        return $this->client->hydrate(
+            $this->client->post($this->path, $query, $data, false)
+        );
+    }
+
     public function find(int $id): BaseModel
     {
         $query = $this->singleQueryData();
@@ -209,6 +227,10 @@ class Query
             }
 
             $path = $this->path;
+        }
+
+        if ($this->byPath) {
+            $path = '/'.$this->byPath.'/'.$this->byId.'/'.$path;
         }
 
         return collect($this->client->get($path, $query, false))

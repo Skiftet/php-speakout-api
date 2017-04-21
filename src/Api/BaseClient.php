@@ -106,5 +106,28 @@ abstract class BaseClient
         );
     }
 
-    abstract public function clientForResource(string $resource);
+    public function post(
+        string $path,
+        array $query = [],
+        array $data = [],
+        bool $userPrefix = true
+    ): array {
+        $path = trim($path, '/');
+        $path = "/$path";
+
+        return json_decode(
+            (string)$this->client
+                ->request('POST', '/api/'.$this->version.$path, [
+                    'query' => $query,
+                    'json' => $data,
+                    'auth' => [
+                        $this->user, $this->password
+                    ],
+                ])
+                ->getBody(),
+            true
+        );
+    }
+
+    abstract public function clientForResource(string $resource): BaseResource;
 }
