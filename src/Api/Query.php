@@ -78,7 +78,7 @@ class Query
     public function since($date): self
     {
         if (!is_string($date)) {
-            $this->since = (string)$date;
+            $date = (string)$date;
         }
 
         $this->since = $date;
