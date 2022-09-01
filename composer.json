@@ -6,11 +6,11 @@
     "require": {
         "php": "^7.1",
         "guzzlehttp/guzzle": "^6.2",
-        "illuminate/support": "^5.4",
-        "nesbot/carbon": "^1.22"
+        "nesbot/carbon": "^2",
+        "laravel/helpers": "^1.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0",
+        "phpunit/phpunit": "^8.0",
         "friendsofphp/php-cs-fixer": "^2.0"
     },
     "autoload": {

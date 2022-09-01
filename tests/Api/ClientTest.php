@@ -20,7 +20,7 @@ class ClientTest extends TestCase
         'SPEAKOUT_API_TEST_EMAIL' => null,
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         foreach (self::$env as $key => &$value) {
             $value = getenv($key);
@@ -32,7 +32,7 @@ class ClientTest extends TestCase
         }
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->speakout = new Speakout([
             'endpoint' => self::$env['SPEAKOUT_API_ENDPOINT'],
@@ -41,7 +41,7 @@ class ClientTest extends TestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->speakout = null;
     }
@@ -87,6 +87,7 @@ class ClientTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Action::class, $action);
+        $this->assertGreaterThanOrEqual(1, $action['id']);
     }
 
     /**
