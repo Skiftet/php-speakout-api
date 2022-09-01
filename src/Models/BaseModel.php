@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Skiftet\Speakout\Models;
 use ArrayAccess;
 use RuntimeException;
+use Illuminate\Support\Str;
 use Skiftet\Speakout\Api\BaseClient;
 use Skiftet\Speakout\Api\BaseResource;
 use Skiftet\Speakout\Api\Query;
@@ -75,7 +76,7 @@ class BaseModel implements ArrayAccess
 
     private function path(): string
     {
-        return strtolower(str_plural(class_basename(static::class)));
+        return strtolower(Str::plural(class_basename(static::class)));
     }
 
     public function setClient(BaseClient $client): self

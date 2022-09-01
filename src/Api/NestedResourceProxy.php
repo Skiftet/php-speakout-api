@@ -46,7 +46,7 @@ class NestedResourceProxy implements ResourceInterface
      */
     public function path(): string
     {
-        return str_slug(class_basename(static::class));
+        return Str::slug(class_basename(static::class));
     }
 
     public function hydrate($data): BaseModel

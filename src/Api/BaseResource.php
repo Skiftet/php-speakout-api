@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Skiftet\Speakout\Api;
 
 use InvalidArgumentException;
+use Illuminate\Support\Str;
 use Skiftet\Speakout\Models\BaseModel;
 
 abstract class BaseResource extends BaseClient implements ResourceInterface
@@ -50,12 +51,12 @@ abstract class BaseResource extends BaseClient implements ResourceInterface
      */
     public function path(): string
     {
-        return str_slug(class_basename(static::class));
+        return Str::slug(class_basename(static::class));
     }
 
     public function hydrate($data): BaseModel
     {
-        $class = 'Skiftet\\Speakout\\Models\\'.str_singular(class_basename(static::class));
+        $class = 'Skiftet\\Speakout\\Models\\'.Str::singular(class_basename(static::class));
         return new $class($data, $this);
     }
 
