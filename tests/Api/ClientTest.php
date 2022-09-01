@@ -51,7 +51,7 @@ class ClientTest extends TestCase
      */
     public function testCampaignListing()
     {
-        $this->assertInternalType('array', $this->speakout->campaigns()->all());
+        $this->assertIsArray($this->speakout->campaigns()->all());
     }
 
     /**
@@ -70,7 +70,7 @@ class ClientTest extends TestCase
      */
     public function testActionInCampaigns(Campaign $campaign)
     {
-        $this->assertInternalType('array', $campaign->actions()->all());
+        $this->assertIsArray($campaign->actions()->all());
     }
 
     /**
@@ -95,7 +95,7 @@ class ClientTest extends TestCase
      */
     public function testActionListing()
     {
-        $this->assertInternalType('array', $this->speakout->actions()->all());
+        $this->assertIsArray($this->speakout->actions()->all());
     }
 
     public function testHydration()
@@ -128,6 +128,6 @@ class ClientTest extends TestCase
     public function testUrlAfterSerialize(string $serialized)
     {
         $campaigns = unserialize($serialized);
-        $this->assertInternalType('string', $campaigns[0]->setClient($this->speakout)->url());
+        $this->assertIsString($campaigns[0]->setClient($this->speakout)->url());
     }
 }
