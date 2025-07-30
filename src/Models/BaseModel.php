@@ -28,7 +28,7 @@ class BaseModel implements ArrayAccess
     /**
      * @inheritDoc
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->data[$offset];
     }

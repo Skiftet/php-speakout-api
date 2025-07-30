@@ -53,7 +53,7 @@ class Query
      * @param BaseResource $client
      * @param string $path
      */
-    public function __construct(BaseResource $client, string $path = null)
+    public function __construct(BaseResource $client, ?string $path = null)
     {
         $this->client = $client;
         $this->path = $path;
